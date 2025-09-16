@@ -1,0 +1,37 @@
+trigger:
+- master
+
+resources:
+- repo: self
+
+parameters:
+  - name: dockerHubUsername
+    type: string
+    default: 'darshan30899'
+
+  - name: imageName
+    type: string
+    default: 'firstrepo'
+
+  - name: containerRegistry
+    type: string
+    default: 'myhubpassword'
+
+  - name: dockerfilePath
+    type: string
+    default: '$(Build.SourcesDirectory)/Dockerfile.txt'
+
+variables:
+  imageTag: '$(Build.BuildId)'
+  fullImageName: '${{ parameters.dockerHubUsername }}/${{ parameters.imageName }}:$(Build.BuildId)'
+
+stages:
+- template: templates/docker-build-push.yml
+  parameters:
+    dockerHubUsername: ${{ parameters.dockerHubUsername }}
+    imageName: ${{ parameters.imageName }}
+    containerRegistry: ${{ parameters.containerRegistry }}
+    dockerfilePath: ${{ parameters.dockerfilePath }}
+    imageTag: $(Build.BuildId)
+
+- template: templates/copy-publish.yml

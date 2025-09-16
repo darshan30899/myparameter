@@ -1,0 +1,31 @@
+stages:
+- stage: CopyAndPublish
+  displayName: Copy Files and Publish Artifact
+  jobs:
+  - job: CopyAndPublish
+    displayName: Copy and Publish
+    pool:
+      name: New-agent
+    steps:
+    - script: |
+        echo "Source directory:"
+        ls -R $(Build.SourcesDirectory)
+      displayName: 'Debug: List source folder'
+
+    - task: CopyFiles@2
+      displayName: 'Copy files to staging'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: '**/*'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - script: |
+        echo "Artifact staging directory:"
+        ls -R $(Build.ArtifactStagingDirectory)
+      displayName: 'Debug: List artifact staging folder'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifact'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        artifact: 'drop'
