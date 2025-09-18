@@ -1,3 +1,20 @@
-FROM nginx
+# Use Node.js official image
+FROM node:18-alpine
 
+# Set working directory
+WORKDIR /app
 
+# Copy package.json
+COPY package*.json ./
+
+# Install dependencies (none in this case)
+RUN npm install
+
+# Copy all files
+COPY . .
+
+# Expose app port
+EXPOSE 3000
+
+# Run the app
+CMD ["npm", "start"]
